@@ -1,6 +1,7 @@
 import Navbar from "../Components/Navbar";
 import Select from "react-select";
 import { BsStars } from "react-icons/bs";
+import { LuCodeXml } from "react-icons/lu";
 
 function Home() {
 
@@ -74,7 +75,9 @@ function Home() {
           ></textarea>
 
           <div className="flex items-center justify-between">
-            <p className="text-[gray]">Click on Generate Button to generate your UI component </p>
+            <p className="text-[gray]">
+              Click on Generate Button to generate your UI component{" "}
+            </p>
             <button className="generate flex items-center p-[15px] rounded-lg border-0 bg-gradient-to-r from-purple-400  to-purple-600 mt-3  px-[20px] gap-[10px] transition-all hover:opacity-[0.7]">
               <i>
                 <BsStars />
@@ -83,7 +86,14 @@ function Home() {
             </button>
           </div>
         </div>
-        <div className="right w-[50%] h-[80vh] mt-5 bg-[#141319]"></div>
+        <div className="right w-[50%] h-[80vh] mt-5 bg-[#141319] rounded-xl">
+          <div className="skeleton w-full h-full flex items-center flex-col justify-center">
+            <div className="circle p-[20px] w-[70px] h-[70px] flex items-center justify-center text-[30px] rounded-[50%] bg-gradient-to-r from-purple-400  to-purple-600">
+              <LuCodeXml />
+            </div>
+            <p className="text-[16px] text-[gray] mt-3">Your component and code will appear here.</p>
+          </div>
+        </div>
       </div>
     </>
   );
