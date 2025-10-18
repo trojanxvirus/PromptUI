@@ -2,6 +2,12 @@ import Navbar from "../Components/Navbar";
 import Select from "react-select";
 import { BsStars } from "react-icons/bs";
 import { LuCodeXml } from "react-icons/lu";
+import Editor from "@monaco-editor/react";
+import { useState } from "react";
+import { IoCopySharp } from "react-icons/io5";
+import { PiExportBold } from "react-icons/pi";
+import { ImNewTab } from "react-icons/im";
+import { LuRefreshCw } from "react-icons/lu";
 
 function Home() {
 
@@ -12,6 +18,9 @@ function Home() {
     { value: "html-css-js", label: "HTML + CSS + JS" },
     { value: "html-tailwind-bootstrap", label: "HTML + Tailwind CSS + Bootstrap" },
   ];
+
+  const [outputScreen, setOutputScreen] = useState(true);
+  const [tab, setTab] = useState(1);
 
   const customStyles = {
     control: (provided, state) => ({
@@ -87,12 +96,86 @@ function Home() {
           </div>
         </div>
         <div className="right w-[50%] h-[80vh] mt-5 bg-[#141319] rounded-xl">
-          <div className="skeleton w-full h-full flex items-center flex-col justify-center">
-            <div className="circle p-[20px] w-[70px] h-[70px] flex items-center justify-center text-[30px] rounded-[50%] bg-gradient-to-r from-purple-400  to-purple-600">
-              <LuCodeXml />
-            </div>
-            <p className="text-[16px] text-[gray] mt-3">Your component and code will appear here.</p>
-          </div>
+          {outputScreen === false ? (
+            <>
+              <div className="skeleton w-full h-full flex items-center flex-col justify-center">
+                <div className="circle p-[20px] w-[70px] h-[70px] flex items-center justify-center text-[30px] rounded-[50%] bg-gradient-to-r from-purple-400  to-purple-600">
+                  <LuCodeXml />
+                </div>
+                <p className="text-[16px] text-[gray] mt-3">
+                  Your component and code will appear here.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="top w-full h-[60px] bg-[#17171C] flex items-center gap-[15px] px-[20px] ">
+                <button
+                  onClick={() => setTab(1)}
+                  className={`btn w-[50%] p-[10px] rounded-xl cursor-pointer transition-all ${
+                    tab === 1 ? "bg-[#333]" : ""
+                  }`}
+                >
+                  Code
+                </button>
+                <button
+                  onClick={() => setTab(2)}
+                  className={`btn w-[50%] p-[10px] rounded-xl cursor-pointer transition-all ${
+                    tab === 2 ? "bg-[#333]" : ""
+                  }`}
+                >
+                  Preview
+                </button>
+              </div>
+
+              <div className="top-2 w-full h-[60px] bg-[#17171C] flex items-center justify-between gap-[15px] px-[20px]">
+                <div className="left">
+                  <p className="font-bold">Code Editor</p>
+                </div>
+
+                <div className="right flex items-center gap-[10px]">
+                  {tab === 1 ? (
+                    <>
+                      <button className="copy w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                        <IoCopySharp />
+                      </button>
+
+                      <button className="export w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                        <PiExportBold />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="copy w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                        <ImNewTab />
+                      </button>
+
+                      <button className="export w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                        <LuRefreshCw />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="editor h-full">
+                {tab === 1 ? (
+                  <>
+                    <Editor
+                      height="100%"
+                      theme="vs-dark"
+                      language="html"
+                      value=""
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="preview w-full h-full bg-white text-black flex items-center justify-center"></div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
