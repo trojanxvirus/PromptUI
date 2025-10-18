@@ -30,7 +30,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
 
   const ai = new GoogleGenAI({
-    apiKey: import.meta.env.API_KEY,
+    apiKey: import.meta.env.VITE_API_KEY,
   });
 
   async function getResponse() {
