@@ -9,6 +9,7 @@ import { PiExportBold } from "react-icons/pi";
 import { ImNewTab } from "react-icons/im";
 import { LuRefreshCw } from "react-icons/lu";
 import { GoogleGenAI } from "@google/genai";
+import { ClipLoader } from "react-spinners";
 
 function Home() {
   const options = [
@@ -22,12 +23,17 @@ function Home() {
     },
   ];
 
-  const [outputScreen, setOutputScreen] = useState(true);
+  const [outputScreen, setOutputScreen] = useState(false);
   const [tab, setTab] = useState(1);
   const [prompt, setPrompt] = useState("");
   const [framework, setFramework] = useState(options[0]);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function extractCode(response) {
+    const match = response.match(/```(?:\w+)?\n?([\s\S]*?)```/);
+    return match ? match[1].trim() : response.trim();
+  }
 
   const ai = new GoogleGenAI({
     apiKey: import.meta.env.VITE_API_KEY,
@@ -54,12 +60,10 @@ And give the whole code in a single HTML file.
       `,
     });
     console.log(response.text);
-    setCode(response.text);
+    setCode(extractCode(response.text));
     setOutputScreen(true);
     setLoading(false);
   }
-
-  
 
   const customStyles = {
     control: (provided, state) => ({
@@ -144,9 +148,19 @@ And give the whole code in a single HTML file.
             </button>
           </div>
         </div>
-        <div className="right w-[50%] h-[80vh] mt-5 bg-[#141319] rounded-xl">
+        <div className="right relative w-[50%] h-[80vh] mt-5 bg-[#141319] rounded-xl">
           {outputScreen === false ? (
             <>
+              {loading === true ? (
+                <>
+                  <div className="absolute inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.7)] backdrop-blur-sm z-[9999]">
+                    <ClipLoader color="#a855f7" size={80} />
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
+
               <div className="skeleton w-full h-full flex items-center flex-col justify-center">
                 <div className="circle p-[20px] w-[70px] h-[70px] flex items-center justify-center text-[30px] rounded-[50%] bg-gradient-to-r from-purple-400  to-purple-600">
                   <LuCodeXml />
@@ -211,10 +225,11 @@ And give the whole code in a single HTML file.
                 {tab === 1 ? (
                   <>
                     <Editor
+                      value={code}
                       height="100%"
                       theme="vs-dark"
                       language="html"
-                      value=""
+                      
                     />
                   </>
                 ) : (
