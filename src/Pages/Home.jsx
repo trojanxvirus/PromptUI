@@ -10,6 +10,7 @@ import { ImNewTab } from "react-icons/im";
 import { LuRefreshCw } from "react-icons/lu";
 import { GoogleGenAI } from "@google/genai";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 function Home() {
   const options = [
@@ -98,6 +99,27 @@ And give the whole code in a single HTML file.
       color: "#aaa", // placeholder color
     }),
   };
+
+  const copyCode = async ()=>{
+     try {
+      await navigator.clipboard.writeText(code);
+      toast.success("Code copied to clipboard")
+    } catch (err) {
+      toast.error('Failed to copy');
+    }
+  }
+
+  const downloadFile = () =>{
+    const fileName = "PromptUI-Code.html"
+    const blob = new Blob([code], {type: 'text/plain'})
+    let url =  URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("File downloaded successfully!")
+  }
 
   return (
     <>
@@ -199,11 +221,15 @@ And give the whole code in a single HTML file.
                 <div className="right flex items-center gap-[10px]">
                   {tab === 1 ? (
                     <>
-                      <button className="copy w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                      <button className="copy w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]"
+                        onClick={copyCode}
+                      >
                         <IoCopySharp />
                       </button>
 
-                      <button className="export w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]">
+                      <button className="export w-[40px] h-[40px] rounded-xl border-[1px] border-zinc-800 flex items-center justify-center transition-all hover:bg-[#333]"
+                      onClick={downloadFile}
+                      >
                         <PiExportBold />
                       </button>
                     </>
