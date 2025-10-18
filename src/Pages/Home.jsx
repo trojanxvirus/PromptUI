@@ -8,19 +8,58 @@ import { IoCopySharp } from "react-icons/io5";
 import { PiExportBold } from "react-icons/pi";
 import { ImNewTab } from "react-icons/im";
 import { LuRefreshCw } from "react-icons/lu";
+import { GoogleGenAI } from "@google/genai";
 
 function Home() {
-
   const options = [
     { value: "html-css", label: "HTML + CSS" },
     { value: "html-tailwind", label: "HTML + Tailwind CSS" },
     { value: "html-bootstrap", label: "HTML + Bootstrap" },
     { value: "html-css-js", label: "HTML + CSS + JS" },
-    { value: "html-tailwind-bootstrap", label: "HTML + Tailwind CSS + Bootstrap" },
+    {
+      value: "html-tailwind-bootstrap",
+      label: "HTML + Tailwind CSS + Bootstrap",
+    },
   ];
 
   const [outputScreen, setOutputScreen] = useState(true);
   const [tab, setTab] = useState(1);
+  const [prompt, setPrompt] = useState("");
+  const [framework, setFramework] = useState(options[0]);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const ai = new GoogleGenAI({
+    apiKey: import.meta.env.API_KEY,
+  });
+
+  async function getResponse() {
+    setLoading(true);
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `
+       You are an experienced programmer with expertise in web development and UI/UX design. You create modern, animated, and fully responsive UI components. You are highly skilled in HTML, CSS, Tailwind CSS, Bootstrap, JavaScript, React, Next.js, Vue.js, Angular, and more.
+
+Now, generate a UI component for: ${prompt}  
+Framework to use: ${framework.value}  
+
+Requirements:  
+The code must be clean, well-structured, and easy to understand.  
+Optimize for SEO where applicable.  
+Focus on creating a modern, animated, and responsive UI design.  
+Include high-quality hover effects, shadows, animations, colors, and typography.  
+Return ONLY the code, formatted properly in **Markdown fenced code blocks**.  
+Do NOT include explanations, text, comments, or anything else besides the code.  
+And give the whole code in a single HTML file.
+      `,
+    });
+    console.log(response.text);
+    setCode(response.text);
+    setOutputScreen(true);
+    setLoading(false);
+  }
+
+  
 
   const customStyles = {
     control: (provided, state) => ({
@@ -55,7 +94,7 @@ function Home() {
       color: "#aaa", // placeholder color
     }),
   };
-  
+
   return (
     <>
       <Navbar />
@@ -70,6 +109,9 @@ function Home() {
 
           <p className="text-[15px] font-[700] mt-4">Framework</p>
           <Select
+            onChange={(e) => {
+              setFramework(e.value);
+            }}
             className="mt-4"
             options={options}
             styles={customStyles}
@@ -79,6 +121,10 @@ function Home() {
             Write your prompt for generating components :{" "}
           </p>
           <textarea
+            onChange={(e) => {
+              setPrompt(e.target.value);
+            }}
+            value={prompt}
             className="w-full min-h-[250px] bg-[#09090B] mt-5 h-[200px] rounded-xl p-[10px]"
             placeholder="Write prompt here"
           ></textarea>
@@ -87,7 +133,10 @@ function Home() {
             <p className="text-[gray]">
               Click on Generate Button to generate your UI component{" "}
             </p>
-            <button className="generate flex items-center p-[15px] rounded-lg border-0 bg-gradient-to-r from-purple-400  to-purple-600 mt-3  px-[20px] gap-[10px] transition-all hover:opacity-[0.7]">
+            <button
+              onClick={getResponse}
+              className="generate flex items-center p-[15px] rounded-lg border-0 bg-gradient-to-r from-purple-400  to-purple-600 mt-3  px-[20px] gap-[10px] transition-all hover:opacity-[0.7]"
+            >
               <i>
                 <BsStars />
               </i>
